@@ -1,0 +1,74 @@
+[
+  {
+    "id": "hysan-place",
+    "name": "Hysan Place",
+    "nameZh": "\u5e0c\u614e\u5ee3\u5834",
+    "floors": 2
+  },
+  {
+    "id": "popcorn-2",
+    "name": "PopCorn 2",
+    "nameZh": "PopCorn 2",
+    "floors": 2
+  },
+  {
+    "id": "kowloon-tong-festival-walk",
+    "name": "Festival Walk / Kowloon Tong footbridges",
+    "nameZh": "\u53c8\u4e00\u57ce\u30fb\u4e5d\u9f8d\u5858\u7ad9\u5929\u6a4b",
+    "floors": 11
+  },
+  {
+    "id": "shek-kip-mei-services",
+    "name": "Shek Kip Mei Estate Ancillary Facilities Block",
+    "nameZh": "\u77f3\u7864\u5c3e\u90a8\u670d\u52d9\u8a2d\u65bd\u5927\u6a13",
+    "floors": 2
+  },
+  {
+    "id": "cheung-sha-wan-government",
+    "name": "Cheung Sha Wan Government Offices",
+    "nameZh": "\u9577\u6c99\u7063\u653f\u5e9c\u5408\u7f72",
+    "floors": 2
+  },
+  {
+    "id": "sha-tin-government",
+    "name": "Sha Tin Government Offices",
+    "nameZh": "\u6c99\u7530\u653f\u5e9c\u5408\u7f72",
+    "floors": 4
+  },
+  {
+    "id": "north-point-government",
+    "name": "North Point Government Offices",
+    "nameZh": "\u5317\u89d2\u653f\u5e9c\u5408\u7f72",
+    "floors": 2
+  },
+  {
+    "id": "pei-ho-market",
+    "name": "Pei Ho Street Municipal Services Building",
+    "nameZh": "\u5317\u6cb3\u8857\u5e02\u653f\u5927\u5ec8",
+    "floors": 2
+  },
+  {
+    "id": "java-road-market",
+    "name": "Java Road Municipal Services Building",
+    "nameZh": "\u6e23\u83ef\u9053\u5e02\u653f\u5927\u5ec8",
+    "floors": 2
+  },
+  {
+    "id": "kowloon-city-market",
+    "name": "Kowloon City Municipal Services Building",
+    "nameZh": "\u4e5d\u9f8d\u57ce\u5e02\u653f\u5927\u5ec8",
+    "floors": 2
+  },
+  {
+    "id": "tai-po-market",
+    "name": "Tai Po Hui Market and Cooked Food Centre",
+    "nameZh": "\u5927\u57d4\u589f\u8857\u5e02\u53ca\u719f\u98df\u4e2d\u5fc3",
+    "floors": 2
+  },
+  {
+    "id": "kwai-hing-government",
+    "name": "Kwai Hing Government Offices",
+    "nameZh": "\u8475\u8208\u653f\u5e9c\u5408\u7f72",
+    "floors": 2
+  }
+]

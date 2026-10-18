@@ -1,0 +1,638 @@
+{
+  "project": "AccessRoute HK",
+  "date": "2026-10-18",
+  "timezone": "Asia/Shanghai",
+  "source": "accessroute-hk working source",
+  "command": "npm test -- --reporter=json",
+  "success": true,
+  "testFiles": 16,
+  "testsPassed": 132,
+  "testsFailed": 0,
+  "testsPending": 0,
+  "testResults": [
+    {
+      "file": "tests/api/api.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "health, scenes and route API return actual contracts",
+          "status": "passed"
+        },
+        {
+          "name": "validates input and unknown scene",
+          "status": "passed"
+        },
+        {
+          "name": "writes are disabled by default and foreign origin is rejected",
+          "status": "passed"
+        },
+        {
+          "name": "events survive backend restart and change routing",
+          "status": "passed"
+        },
+        {
+          "name": "concurrent event writes preserve both events",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/events/events.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "closed lift A uses B and all closures return no_route without mutation",
+          "status": "passed"
+        },
+        {
+          "name": "resolved events do not block",
+          "status": "passed"
+        },
+        {
+          "name": "expired events do not block",
+          "status": "passed"
+        },
+        {
+          "name": "future events do not block",
+          "status": "passed"
+        },
+        {
+          "name": "event validity range is checked",
+          "status": "passed"
+        },
+        {
+          "name": "edge-targeted construction blocks only selected connection",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/genai/demo-library.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "offline story library contains four complete personas for all 12 scenes and licensed local image references",
+          "status": "passed"
+        },
+        {
+          "name": "offline story library replays every agent response through the common result contract and reproduces all route snapshots",
+          "status": "passed"
+        },
+        {
+          "name": "offline story library demonstrates accessible reroutes, covered rain alternatives, and lift-free fault detours",
+          "status": "passed"
+        },
+        {
+          "name": "offline story library rejects a recorded answer for a different map context",
+          "status": "passed"
+        },
+        {
+          "name": "offline story library repeated route segmentation preserves the original geometry arrays",
+          "status": "passed"
+        },
+        {
+          "name": "offline story library retrieves actual shop names and keeps approximate anchors below automatic acceptance",
+          "status": "passed"
+        },
+        {
+          "name": "offline story library serves official knowledge independently of model calls and exposes shop candidates to the workflows",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/genai/integration.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "GenAI integration contracts accepts all four generated examples with real graph references",
+          "status": "passed"
+        },
+        {
+          "name": "GenAI integration contracts rejects unsupported versions, unknown fields and invalid preferences",
+          "status": "passed"
+        },
+        {
+          "name": "GenAI integration contracts routes around a reported lift, returns no_route for both and restores resolved events",
+          "status": "passed"
+        },
+        {
+          "name": "GenAI integration contracts rejects invented target IDs, low confidence and reversed validity intervals",
+          "status": "passed"
+        },
+        {
+          "name": "GenAI integration contracts requires node-floor agreement and treats outdoors as a non-positioning status",
+          "status": "passed"
+        },
+        {
+          "name": "GenAI integration contracts restricts guidance text length and rejects unsafe audio schemes",
+          "status": "passed"
+        },
+        {
+          "name": "GenAI integration contracts honors added preferences without relaxing wheelchair restrictions",
+          "status": "passed"
+        },
+        {
+          "name": "GenAI integration contracts HTTP validation never persists events and returns structured errors",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/genai/speech.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "text-only mode does not need or invoke a speech engine",
+          "status": "passed"
+        },
+        {
+          "name": "selects the Cantonese male voice instead of an English or female voice",
+          "status": "passed"
+        },
+        {
+          "name": "reports a missing Cantonese voice without speaking in another language",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/genai/workflows.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "four map-grounded workflows parses preferences and leaves event application to the caller",
+          "status": "passed"
+        },
+        {
+          "name": "four map-grounded workflows localizes from a real directory node using observation then matching, without caller supplying the answer",
+          "status": "passed"
+        },
+        {
+          "name": "four map-grounded workflows uses mapped visual descriptions when OCR cannot read a shop name",
+          "status": "passed"
+        },
+        {
+          "name": "four map-grounded workflows ambiguous shops require a consumable confirmation and preserve the score",
+          "status": "passed"
+        },
+        {
+          "name": "four map-grounded workflows low observation confidence stays low, with explicit confirmation as the alternative",
+          "status": "passed"
+        },
+        {
+          "name": "four map-grounded workflows an unknown floor and an out-of-scene GPS produce no match",
+          "status": "passed"
+        },
+        {
+          "name": "four map-grounded workflows matches a photographed lift then applies the event through the map API and reroutes",
+          "status": "passed"
+        },
+        {
+          "name": "four map-grounded workflows does not resolve an old event just because a photo shows no visible barrier",
+          "status": "passed"
+        },
+        {
+          "name": "four map-grounded workflows a path barrier can be confirmed against retrieved edges without an invented target",
+          "status": "passed"
+        },
+        {
+          "name": "four map-grounded workflows builds voice guidance from server route facts and honors text-only preference",
+          "status": "passed"
+        },
+        {
+          "name": "four map-grounded workflows rejects invalid map endpoints before invoking a model",
+          "status": "passed"
+        },
+        {
+          "name": "four map-grounded workflows ranks without accepting invented map evidence or unrelated IDs",
+          "status": "passed"
+        },
+        {
+          "name": "Qwen API transport keeps credentials server-side and selects vision model only for photos",
+          "status": "passed"
+        },
+        {
+          "name": "Qwen API transport reports missing configuration and provider errors instead of fake successes",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/policies/weather.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "rain increases exposed edge cost without negative bonuses",
+          "status": "passed"
+        },
+        {
+          "name": "rain plugin changes choice using same engine",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/scene-contract/contract.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "third scene loads without routing or renderer changes",
+          "status": "passed"
+        },
+        {
+          "name": "rejects malformed graph: duplicate",
+          "status": "passed"
+        },
+        {
+          "name": "rejects malformed graph: dangling",
+          "status": "passed"
+        },
+        {
+          "name": "rejects malformed graph: negative",
+          "status": "passed"
+        },
+        {
+          "name": "rejects malformed graph: cross-floor",
+          "status": "passed"
+        },
+        {
+          "name": "manifest files cannot escape scene directory",
+          "status": "passed"
+        },
+        {
+          "name": "static and HTTP provider produce identical navigation output",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/scene-contract/expansion.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "12 distinct scenes provide 132 ordered journeys with usable first/last legs",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong follows official indoor, lift and footbridge geometry",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/scene-contract/route-presentation.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "floor colours stay distinct and vertical instructions follow travel direction",
+          "status": "passed"
+        },
+        {
+          "name": "endpoint names reverse with the route, including the station",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/session/field-routes.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "Kowloon Tong field routes serves Street View for the authoritative walking step, changes with progress and preserves navigation",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes completes both walking legs and rail with untouched defaults (reverse=false)",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes completes both walking legs and rail with untouched defaults (reverse=true)",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes switches ordinary walking to cover only when weather changes (reverse=false)",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes switches ordinary walking to cover only when weather changes (reverse=true)",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes migrates legacy implicit defaults without overriding implicit choices",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes migrates legacy implicit defaults without overriding saved choices",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes migrates legacy implicit defaults without overriding current choices",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes stores three distinct connected paths with two distinct mall exits and retained source geometry",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes defaults to the exact outdoor path for ordinary walking, and the mall A path for rain, heat shelter or elderly needs",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes retains both alternatives but excludes stair routes and steep slopes under wheelchair defaults",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes fails a specified unsafe branch and a closed station lift without silently relaxing constraints",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes supports reverse travel and recomputes from a confirmed LG1 anchor",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes serves the same three alternatives through the route API and a grounded field landmark repository",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes preserves full journey and rail steps while preferences change the Kowloon leg",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes matches actual photo bytes to A-1 Bakery and changes position only after confirmation",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes migrates the previous standalone preview into full journey planning without step photos",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes completes the reversed full journey for walking in sun",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes completes the reversed full journey for walking in rain",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes completes the reversed full journey for elderly in sun",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes completes the reversed full journey for elderly in rain",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes explains the wheelchair block in reverse and recovers to full overview when the user updates needs",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes retains every original official floor centreline alongside the real walking route",
+          "status": "passed"
+        },
+        {
+          "name": "Kowloon Tong field routes supports photo localization on the reverse origin and lift faults on the reverse destination",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/session/product-map.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "product navigation shows the real Kowloon Tong route keeps the bridge geometry visible instead of an empty floor view",
+          "status": "passed"
+        },
+        {
+          "name": "product navigation shows the real Kowloon Tong route keeps the outdoor geometry visible instead of an empty floor view",
+          "status": "passed"
+        },
+        {
+          "name": "product navigation shows the real Kowloon Tong route keeps the transition geometry visible instead of an empty floor view",
+          "status": "passed"
+        },
+        {
+          "name": "compact navigation instructions preserve route meaning keeps the bridge turn and descent in the current instruction",
+          "status": "passed"
+        },
+        {
+          "name": "compact navigation instructions preserve route meaning retains the full stair instruction and an always-visible handrail reminder (destination-field-edge-1666)",
+          "status": "passed"
+        },
+        {
+          "name": "compact navigation instructions preserve route meaning retains the full stair instruction and an always-visible handrail reminder (destination-field-edge-4127)",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/session/session.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "authoritative shared journeys plans the focus journey, bidirectionally publishes snapshots, reroutes from the lift and localizes before arrival",
+          "status": "passed"
+        },
+        {
+          "name": "authoritative shared journeys reuses saved defaults, keeps trip changes separate and isolates reset/session events",
+          "status": "passed"
+        },
+        {
+          "name": "authoritative shared journeys handles no-route without relaxing wheelchair/required-lift constraints, then restores from the same position",
+          "status": "passed"
+        },
+        {
+          "name": "authoritative shared journeys persists state across process recreation and reconnect subscriptions start with the latest complete snapshot",
+          "status": "passed"
+        },
+        {
+          "name": "authoritative shared journeys rejects outdated versions, idempotency collisions, invalid locations and old-generation commands",
+          "status": "passed"
+        },
+        {
+          "name": "authoritative shared journeys discards late async results after reset, cancellation and route changes",
+          "status": "passed"
+        },
+        {
+          "name": "authoritative shared journeys does not identify an arbitrary image as a prepared scene",
+          "status": "passed"
+        },
+        {
+          "name": "authoritative shared journeys requires overview confirmation after restoring an initially unavailable route",
+          "status": "passed"
+        },
+        {
+          "name": "authoritative shared journeys keeps concurrent updates to different sessions in the persistent snapshot",
+          "status": "passed"
+        },
+        {
+          "name": "authoritative shared journeys parses reversed locations without applying them until confirmed and preserves overview on cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "authoritative shared journeys matches the prepared fault photo bytes, then requires confirmation before creating an event",
+          "status": "passed"
+        },
+        {
+          "name": "authoritative shared journeys treats prefer-avoid lifts as an executable preference with a safe fallback",
+          "status": "passed"
+        },
+        {
+          "name": "authoritative shared journeys enforces HTTP contracts and catalog retains all twelve scenes",
+          "status": "passed"
+        },
+        {
+          "name": "weather policy interpretation considers both endpoint districts and ignores cancelled warnings",
+          "status": "passed"
+        },
+        {
+          "name": "real HTTP state streams sends the same commands to two SSE clients and restores the latest snapshot on reconnection",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/session/spatial-route.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "spatial navigation geometry selects verified panoramas by nearby position and floor, never placing the LG1 panorama on an outdoor stair level",
+          "status": "passed"
+        },
+        {
+          "name": "spatial navigation geometry focuses every step on its own directed start and elevation instead of the complete route bounds",
+          "status": "passed"
+        },
+        {
+          "name": "spatial navigation geometry reverses the viewing direction and keeps Street View latitude/longitude in provider order",
+          "status": "passed"
+        },
+        {
+          "name": "spatial navigation geometry retains XYZ endpoints and vertical lift travel on the complete real walking path",
+          "status": "passed"
+        },
+        {
+          "name": "spatial navigation geometry preserves reverse elevation and geometry direction",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/routing/planning.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "capabilities and multiple routing objectives a wheelchair uses a ramp after every lift closes, even with allowStairs=true",
+          "status": "passed"
+        },
+        {
+          "name": "capabilities and multiple routing objectives walking can explicitly permit stairs",
+          "status": "passed"
+        },
+        {
+          "name": "capabilities and multiple routing objectives elderly can explicitly permit stairs",
+          "status": "passed"
+        },
+        {
+          "name": "capabilities and multiple routing objectives heavy_luggage can explicitly permit stairs",
+          "status": "passed"
+        },
+        {
+          "name": "capabilities and multiple routing objectives stroller can explicitly permit stairs",
+          "status": "passed"
+        },
+        {
+          "name": "capabilities and multiple routing objectives escalators have their own capability and obey direction",
+          "status": "passed"
+        },
+        {
+          "name": "capabilities and multiple routing objectives avoiding lifts selects another cross-level mode",
+          "status": "passed"
+        },
+        {
+          "name": "capabilities and multiple routing objectives slope, width, stair flight limits and opening hours are hard constraints",
+          "status": "passed"
+        },
+        {
+          "name": "capabilities and multiple routing objectives rain minimises exposure even when the covered detour is more than three times longer",
+          "status": "passed"
+        },
+        {
+          "name": "capabilities and multiple routing objectives fastest accounts for facility waiting time and alternatives stay feasible and unique",
+          "status": "passed"
+        },
+        {
+          "name": "capabilities and multiple routing objectives all scene scenarios can route without a lift for every profile",
+          "status": "passed"
+        },
+        {
+          "name": "capabilities and multiple routing objectives all blocked cross-level connections return no_route instead of violating capability",
+          "status": "passed"
+        },
+        {
+          "name": "capabilities and multiple routing objectives the shared preference consumer applies model fields to the same planner",
+          "status": "passed"
+        },
+        {
+          "name": "capabilities and multiple routing objectives indexes and closes a ramp facility even when its endpoints are shared with a lift",
+          "status": "passed"
+        },
+        {
+          "name": "capabilities and multiple routing objectives route API exposes the same scenario, metrics and candidate routes without a model call",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/routing/routing.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "routing invariants wheelchair never takes the shorter stairs route",
+          "status": "passed"
+        },
+        {
+          "name": "routing invariants stroller never uses stairs or escalators",
+          "status": "passed"
+        },
+        {
+          "name": "routing invariants rejects unknown endpoints",
+          "status": "passed"
+        },
+        {
+          "name": "routing invariants supports start equals destination",
+          "status": "passed"
+        },
+        {
+          "name": "routing invariants honors one-way edges",
+          "status": "passed"
+        },
+        {
+          "name": "routing invariants rejects negative plugin costs",
+          "status": "passed"
+        },
+        {
+          "name": "routing invariants strict mode rejects unknown access",
+          "status": "passed"
+        },
+        {
+          "name": "routing invariants segments floors and transition without losing distance",
+          "status": "passed"
+        },
+        {
+          "name": "routing invariants reverse route reverses geometry and level direction",
+          "status": "passed"
+        },
+        {
+          "name": "routing invariants hysan-place: real scene runs, reroutes and blocks both lifts",
+          "status": "passed"
+        },
+        {
+          "name": "routing invariants popcorn-2: real scene runs, reroutes and blocks both lifts",
+          "status": "passed"
+        }
+      ]
+    }
+  ]
+}
