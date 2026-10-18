@@ -70,8 +70,8 @@ validation+='''</div><p class="source-note">Eleven scenes use official floor and
 (OUT/'validation.html').write_text(layout('validation.html','Validation','Explore regression checks, the twelve-scene catalogue and route-recovery examples.',validation))
 
 resources=head('Resources','Project materials<br>and references.','Read the manual, download the presentation or explore the source and supporting materials.')
-resources+='<section class="section"><div class="wrap split"><div><div class="download-panel"><span class="eyebrow">Start here</span><h3>AccessRoute product manual</h3><p>An English guide to the product, with complete journeys, interface screenshots and technical detail.</p><a class="button" href="downloads/product-manual.pdf" target="_blank" rel="noopener">Read the manual ↗</a></div></div><div><div class="resource-group"><h2>Project materials</h2>'
-resources+=resource('downloads/product-manual.pdf','Product manual','English walkthroughs, screenshots and architecture.','PDF · 2.2 MB')
+resources+='<section class="section"><div class="wrap split"><div><div class="download-panel"><span class="eyebrow">Start here</span><h3>AccessRoute product manual</h3><p>An English guide to the product, with complete journeys, interface screenshots and technical detail.</p><a class="button" href="downloads/product-manual.pdf?v=20261018-authors" target="_blank" rel="noopener">Read the manual ↗</a></div></div><div><div class="resource-group"><h2>Project materials</h2>'
+resources+=resource('downloads/product-manual.pdf?v=20261018-authors','Product manual','English walkthroughs, screenshots and architecture.','PDF · 2.2 MB')
 resources+=resource('downloads/presentation.pptx','Project presentation','Technical pages, team presentation and embedded video.','PPTX · 8.5 MB',True)
 resources+=resource('assets/video/product-demo.mp4','Kowloon Tong field journey','Station, mall and pedestrian connections.','MP4 · 33 sec',True)
 resources+=resource('assets/video/route-concept.mp4','Route concept animation','An animated indoor route with lift alternatives.','MP4',True)
