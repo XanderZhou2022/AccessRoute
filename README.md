@@ -13,6 +13,36 @@ Project website for HumanRoute's accessible first and last mile navigation syste
 
 Navigation application source: [AccessRoute_small_demo](https://github.com/XanderZhou2022/AccessRoute_small_demo).
 
+## Technical method pages
+
+- `routing.html`: feasible-graph formulation, objective weights and numbered lexicographic Dijkstra pseudocode.
+- `localization.html`: map indexing, bounded retrieval, evidence scoring and graph-node coordinate resolution.
+
+Both pages are linked from Technology. `scripts/methods.py` maintains the page content and selectable equations / algorithms; `dist/assets/methods.css` supplies their paper-style layout. The TikZ projects in `figures/` generate the main figures, with PDF / SVG exports and a downloadable source ZIP.
+
+The localization page also includes an expanded RAG data-flow figure (`figures/rag-retrieval/`), showing node-linked map records, retrieved candidates, structured model input, evidence pairs, ranking and coordinate lookup.
+
+Both pages now open with interactive explanations. The route widget lets readers change mobility, weather, route objectives and lift closures. The localization walkthrough reveals observation, retrieval, evidence validation, ranking and a confirmable map anchor. It uses clearly labelled synthetic records and prepared visual/model outputs; route planning, spatial retrieval and scoring run through a checked-in snapshot of the application core. See `interactive/README.txt` for source provenance and rebuilding.
+
+Validate the interactive behavior with:
+
+```bash
+node scripts/check_interactive.mjs
+node --check dist/assets/method-interactive.mjs
+```
+
+The Pages workflow checks all static references and 108 combinations of teaching-widget settings before deployment. No model credentials or backend are required by these explanations.
+
+Regenerate figures with a local TeX installation (`pdflatex`, standalone, newtxtext/newtxmath, TikZ) and Poppler (`pdftocairo`):
+
+```bash
+python3 scripts/build_figures.py
+python3 scripts/build.py
+python3 scripts/check.py
+```
+
+Ordinary content edits require only the last two commands. The committed vector exports let GitHub Pages publish without a TeX installation. On narrow screens, figures and long formulas scroll inside their own regions; the rest of each page reflows.
+
 ## Website source
 
 The static site is in `dist/`. It uses HTML, CSS and a small JavaScript menu. All sections have direct URLs and work as ordinary links.

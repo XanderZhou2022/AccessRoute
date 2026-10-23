@@ -4,3 +4,8 @@ node_modules/
 !.env.example
 .qa/
 __pycache__/
+project_context.md
+figures/**/*.aux
+figures/**/*.log
+figures/**/*.out
+figures/**/*.synctex.gz

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Retrieval-Augmented Visual Localization · AccessRoute HK</title><meta name="description" content="The visual observation, map retrieval, evidence scoring and graph-node resolution pipeline behind AccessRoute.">
+<meta name="theme-color" content="#173c35"><meta property="og:title" content="Retrieval-Augmented Visual Localization · AccessRoute HK"><meta property="og:description" content="The visual observation, map retrieval, evidence scoring and graph-node resolution pipeline behind AccessRoute."><meta property="og:type" content="website"><meta property="og:image" content="https://xanderzhou2022.github.io/AccessRoute/assets/route-concept.png"><meta property="og:url" content="https://xanderzhou2022.github.io/AccessRoute/localization.html">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg"><link rel="stylesheet" href="assets/site.css?v=4"><link rel="stylesheet" href="assets/methods.css?v=2"><link rel="stylesheet" href="assets/method-lab.css?v=1"><script src="assets/site.js" defer></script><script type="module" src="assets/method-interactive.mjs?v=1"></script></head>
+<body id="top"><a class="skip" href="#main">Skip to content</a><header class="header"><div class="wrap header-inner"><a class="brand" href="index.html" aria-label="AccessRoute HK home"><svg class="brand-mark" viewBox="0 0 30 36" aria-hidden="true"><path d="M3 30V10a6 6 0 0 1 12 0v16a6 6 0 0 0 12 0V6"/></svg><span>AccessRoute<small> HK</small></span></a><button class="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button><nav id="site-nav" class="nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="journey.html">Journey</a><a href="technology.html" aria-current="page">Technology</a><a href="validation.html">Validation</a><a href="resources.html">Resources</a></nav></div></header>
+<main id="main"><div class="method-page"><div class="wrap">
+    <nav class="method-nav" aria-label="Technical methods"><a href="technology.html">Technology</a>
+    <a href="routing.html">Route planning</a>
+    <a href="localization.html" aria-current="page">Visual localization</a></nav>
+    <header class="method-header"><span class="method-kicker">ACCESSROUTE HK / METHOD 02</span>
+    <h1>Retrieval-Augmented Visual Localization</h1><p>A photo supplies clues. Map records supply coordinates. Follow how the system connects the two.</p>
+    <div class="method-contents"><a href="#try-it">Try it yourself</a><a href="#overview">Method overview</a><a href="#rag-detail">RAG data flow</a><a href="#formulation">Formulation</a>
+    <a href="#algorithm">Algorithm</a><a href="#implementation">Implementation</a></div></header>
+    <section class="method-lab" id="try-it" data-explainer="localization" aria-labelledby="localization-lab-title">
+    <div class="lab-heading"><div><span class="lab-kicker">EXPLORE THE IDEA</span>
+    <h2 id="localization-lab-title">Follow the clues from a sign to a map point.</h2>
+    <p>Read the visible clues, look up nearby map records, then choose a supported location.</p></div>
+    <a class="lab-jump" href="#rag-detail">See the detailed RAG figure ↓</a></div>
+    <p class="prepared-note">Prepared visual observations and model evidence; map retrieval and scoring run in your browser.</p>
+    <noscript><p>Enable JavaScript to use this interactive explanation. The method figures and algorithms below remain readable.</p></noscript>
+    <div class="lab-layout"><form class="demo-controls" aria-label="Localization controls">
+    <label class="select-label" for="photo-detail">What is readable in the photo?</label>
+    <select id="photo-detail" name="clarity"><option value="clear">A clear landmark name</option>
+    <option value="partial">Only part of the name</option><option value="unreadable">No readable name</option></select>
+    <label class="select-label" for="photo-floor">Is the floor visible?</label>
+    <select id="photo-floor" name="floor"><option value="seen">Yes: F1</option><option value="unknown">No floor sign</option></select>
+    <label class="range-label" for="position-accuracy">Position uncertainty <output data-accuracy-value>60 m</output></label>
+    <input id="position-accuracy" type="range" name="accuracy" min="15" max="100" step="5" value="60">
+    <p class="control-help">More uncertainty means a wider search area.</p>
+    <label class="check-row"><input type="checkbox" name="approximate"> F1 Landmark Alpha has an approximate map association</label>
+    <button class="lab-secondary" type="button" data-reset>Reset walkthrough</button>
+    <p class="lab-footnote">Synthetic landmarks and map nodes explain the mechanism. This walkthrough makes no live model calls.</p>
+    </form><div class="lab-workspace">
+    <div class="rag-stepper" role="group" aria-label="Photo-to-map explanation steps">
+    <button type="button" data-rag-step="0" aria-pressed="true"><span>1</span> Read</button>
+    <button type="button" data-rag-step="1" aria-pressed="false"><span>2</span> Retrieve</button>
+    <button type="button" data-rag-step="2" aria-pressed="false"><span>3</span> Match</button>
+    <button type="button" data-rag-step="3" aria-pressed="false"><span>4</span> Rank</button>
+    <button type="button" data-rag-step="4" aria-pressed="false"><span>5</span> Locate</button></div>
+    <p class="lab-screen-reader" role="status" aria-live="polite" aria-atomic="true" data-rag-announcement></p>
+    <div class="rag-stage" data-rag-panel="0"></div><div class="rag-stage" data-rag-panel="1" hidden></div>
+    <div class="rag-stage" data-rag-panel="2" hidden></div><div class="rag-stage" data-rag-panel="3" hidden></div>
+    <div class="rag-stage" data-rag-panel="4" hidden></div>
+    <div class="rag-navigation"><button class="lab-secondary" type="button" data-rag-back disabled>← Previous</button>
+    <p aria-live="polite" aria-atomic="true" data-rag-progress>Step 1 of 5 · Read the visible clues</p>
+    <button class="lab-primary" type="button" data-rag-next>Next step →</button></div></div></div>
+    <details class="lab-glossary"><summary>RAG, in plain language</summary>
+    <p>Retrieval-augmented generation gives the model relevant records before it responds. Here, the records
+    come from a map. The model compares visible clues with those records; the program checks the evidence
+    and looks up the selected node’s stored coordinates. A nearby point alone provides too little evidence to identify a landmark.</p></details>
+    </section><figure class="method-figure" id="overview"><p class="figure-mobile-hint">Scroll the figure horizontally to read all panels ↔</p>
+    <div class="figure-scroll" tabindex="0" role="region" aria-label="Method figure; scroll horizontally on narrow screens">
+    <img src="assets/methods/visual-localization.svg" alt="Three panels show a structured map index, image-to-candidate retrieval and evidence matching, then validation, score-based decisions and graph-node coordinate lookup." width="1050" height="600"></div>
+    <figcaption><b>Figure 2.</b> Retrieved map records ground landmark matching and coordinate lookup. (a) Map index construction. (b) Visual observation, bounded retrieval and evidence matching. (c) Evidence validation, candidate ranking and map-node resolution.</figcaption>
+    <div class="figure-downloads"><a href="assets/methods/visual-localization.svg" target="_blank" rel="noopener">Open vector figure ↗</a>
+    <a href="assets/methods/visual-localization.pdf" download>Download PDF ↓</a>
+    <a href="downloads/method-figures-source.zip" download>TikZ sources ↓</a></div></figure><section class="rag-detail" id="rag-detail"><div class="section-marker">RETRIEVAL / EVIDENCE / MAP ANCHORS</div>
+    <h2>From retrieved records to a map-grounded location</h2>
+    <p>The expanded data flow exposes the records, model context and evidence that connect an image observation to a stored graph node.</p><figure class="method-figure" id="rag-figure"><p class="figure-mobile-hint">Scroll the figure horizontally to read all panels ↔</p>
+    <div class="figure-scroll" tabindex="0" role="region" aria-label="Method figure; scroll horizontally on narrow screens">
+    <img src="assets/methods/rag-retrieval.svg" alt="Six panels show a symbolic photo query, node-linked map records with a mobility graph, a retrieved-candidate table, a structured evidence-matching prompt, observed-to-mapped text pairs with ranked candidates, and coordinate lookup on the stored graph." width="1050" height="705"></div>
+    <figcaption><b>Figure 3.</b> Retrieved records supply the matching context; validated evidence ranks the candidate anchors. (a) Structured photo query. (b) Map records and their graph associations. (c) Bounded Top-20 retrieval. (d) Model input and evidence matching. (e) Span validation, scoring and candidate decisions. (f) Stored coordinate lookup for a ready or confirmed anchor. Solid graph lines denote mobility edges; dashed record links denote stored associations. Retrieval uses floor, spatial and lexical filters. L, M, D and R denote lexical, validated-evidence, spatial and route scores; γ is observation reliability and κ is the association cap.</figcaption>
+    <div class="figure-downloads"><a href="assets/methods/rag-retrieval.svg" target="_blank" rel="noopener">Open vector figure ↗</a>
+    <a href="assets/methods/rag-retrieval.pdf" download>Download PDF ↓</a>
+    <a href="downloads/method-figures-source.zip" download>TikZ sources ↓</a></div></figure></section><article class="method-body"><section class="method-section" id="formulation">
+    <div class="section-marker">01 / FORMULATION</div><h2>Map records bind visual identity to graph nodes</h2>
+    <p>The index <i>K</i> combines named map units, amenities, facility anchors and landmark-directory records.
+    A record <i>k</i> stores names and aliases <i>N</i><sub>k</sub>, descriptions <i>T</i><sub>k</sub>,
+    a category, source, graph node <i>v</i><sub>k</sub>, optional floor <i>ℓ</i><sub>k</sub> and association type.
+    The graph supplies the output coordinate <i>x</i>(<i>v</i><sub>k</sub>).</p>
+    <p>For named unit and amenity geometry, indexing selects a junction, entrance or point-of-interest node on
+    the same floor within 20 metres of the feature centre. Landmark-directory entries supply their own node
+    associations. Facility records attach to graph endpoints associated with that facility.</p>
+    <h2 class="subsection-title">Spatial filtering bounds the candidate set</h2>
+    <p>The vision model maps image <i>I</i> to an observation <i>O</i>: visible names, text, objects,
+    floor label, direction hint and reliability <i>γ</i>. The workflow resolves a visible floor label against
+    the scene manifest. An unknown label or a conflict with the supplied floor produces an empty match set.</p><div class="equation"><div role="math" aria-label="The retrieval radius is the larger of 60 metres and twice position accuracy, or 120 metres without photo position."><i>r</i> = max(60, 2<i>a</i>) m with photo position; &nbsp; <i>r</i> = 120 m otherwise</div><span class="equation-number">(1)</span></div><div class="equation"><div role="math" aria-label="Candidates are nearby landmark records compatible with the resolved floor."><i>C</i> = {<i>k</i> ∈ <i>K</i> : landmark(<i>k</i>) ∧ floor-compatible(<i>k</i>) ∧ dist(<i>k</i>, <i>x</i><sub>0</sub>) ≤ <i>r</i>}</div><span class="equation-number">(2)</span></div><p>The centre <i>x</i><sub>0</sub> is the supplied photo position, or the current graph node.
+    The uncertainty radius <i>a</i> comes from the supplied position accuracy. With no floor constraint,
+    retrieval includes nearby records on all floors. Localization excludes path-edge records.</p>
+    <h2 class="subsection-title">Text retrieval supplies evidence to the matching model</h2>
+    <p>Normalization applies Unicode NFKC, lowercasing and removal of punctuation and spaces.
+    The lexical matcher compares character-bigram sets with Dice similarity, retaining exact-name matches.
+    Generic facility names receive a 0.35 multiplier; description matches receive a 0.85 multiplier.
+    The shortlist keeps the 20 highest lexical scores, with distance breaking ties.</p><div class="equation"><div role="math" aria-label="Dice similarity is twice the number of shared character bigrams divided by the total set sizes.">Dice(<i>A</i>, <i>B</i>) = 2|<i>A</i> ∩ <i>B</i>| / (|<i>A</i>| + |<i>B</i>|)</div><span class="equation-number">(3)</span></div><p>The matching model receives the observation and retrieved records, then returns candidate IDs
+    with paired observed and mapped text spans. Programmatic validation keeps a pair only when both normalized
+    spans contain at least two characters and occur in their declared sources. Optional user clues remain a
+    separate evidence source. In the live workflow that accepts these clues, the lexical score takes the maximum
+    of photo-based and user-description similarity.</p>
+    <div class="method-note"><b>Retrieval representation.</b> This implementation uses spatial filters,
+    lexical retrieval and model-assisted evidence matching. Its map index stores structured records and text.
+    The evidence indicator below records valid text-span pairs.</div>
+    <h2 class="subsection-title">Ranking combines identity evidence with spatial context</h2><div class="equation"><div role="math" aria-label="The candidate score is a capped weighted sum of lexical, evidence, spatial and route terms, rounded to three decimal places."><i>S</i><sub>k</sub> = round<sub>3</sub>(min{<i>γ</i>, <i>κ</i><sub>k</sub>, 0.70<i>L</i><sub>k</sub> + 0.15<i>M</i><sub>k</sub> + 0.10<i>D</i><sub>k</sub> + 0.05<i>R</i><sub>k</sub>})</div><span class="equation-number">(4)</span></div><div class="definition-table"><table><caption>Candidate score terms</caption>
+    <thead><tr><th>Symbol</th><th>Definition</th></tr></thead><tbody>
+    <tr><td><i>L</i><sub>k</sub></td><td>Maximum supported lexical similarity for the candidate.</td></tr>
+    <tr><td><i>M</i><sub>k</sub></td><td>1 if at least one evidence pair survives validation; 0 otherwise.</td></tr>
+    <tr><td><i>D</i><sub>k</sub></td><td>max(0, 1 − dist(<i>k</i>, <i>x</i><sub>0</sub>) / 120 m).</td></tr>
+    <tr><td><i>R</i><sub>k</sub></td><td>max(0, 1 − distance to the nearest same-floor route node / 50 m); zero if none exists.</td></tr>
+    <tr><td><i>γ</i></td><td>Reliability of the visual observation.</td></tr>
+    <tr><td><i>κ</i><sub>k</sub></td><td>0.79 for an approximate association; 1 for other associations.</td></tr>
+    </tbody></table></div><p class="equation-note">The fixed spatial-score scale is 120 m even when the retrieval
+    radius differs. Scores express retrieval support; the implementation has no probability calibration.</p>
+    </section><section class="method-section" id="algorithm"><div class="section-marker">02 / ALGORITHM</div>
+    <h2>Evidence gates the selection of a map anchor</h2><section class="algorithm" aria-label="Algorithm 2: Retrieval-Augmented Landmark Localization">
+    <h3><strong>Algorithm 2</strong> Retrieval-Augmented Landmark Localization</h3>
+    <div class="algorithm-contract"><p><b>Input:</b> Image <i>I</i>, map index <i>K</i>, graph <i>G</i>, position / floor / route context, optional user clues.</p><p><b>Output:</b> <code>ready</code> with a node reference, <code>needs_confirmation</code> with candidates, or <code>no_match</code>.</p></div>
+    <ol class="algorithm-lines"><li><span style="--indent:0"><i>O</i> ← visual observation of <i>I</i>; resolve its floor against the scene manifest.</span></li><li><span style="--indent:0"><b>if</b> a visible floor label is present but unrecognized, or its resolved floor conflicts with the supplied floor, <b>then return</b> <code>no_match</code>.</span></li><li><span style="--indent:0"><i>C</i> ← nearby, floor-compatible landmark records from <i>K</i>.</span></li><li><span style="--indent:0"><i>C</i><sub>20</sub> ← top 20 records by lexical score, breaking ties by distance.</span></li><li><span style="--indent:0"><b>if</b> <i>C</i><sub>20</sub> = ∅ <b>then return</b> <code>no_match</code>.</span></li><li><span style="--indent:0"><i>H</i> ← model evidence matches between <i>O</i> and <i>C</i><sub>20</sub>.</span></li><li><span style="--indent:0">Validate observed and mapped spans in <i>H</i> against their declared sources.</span></li><li><span style="--indent:0">Compute <i>S</i><sub>k</sub> for each candidate; sort by score, then distance.</span></li><li><span style="--indent:0">Let <i>k</i><sub>1</sub> be the top record; let <i>k</i><sub>2</sub> be the highest-ranked record on a different node.</span></li><li><span style="--indent:0"><b>if</b> <i>S</i><sub>1</sub> &lt; 0.20 <b>then return</b> <code>no_match</code>.</span></li><li><span style="--indent:0"><b>if</b> <i>S</i><sub>1</sub> ≥ 0.80 and <i>S</i><sub>1</sub> − <i>S</i><sub>2</sub> ≥ 0.12 <b>then</b></span></li><li><span style="--indent:1"><b>return</b> <code>ready</code> with node <i>v</i><sub>1</sub> and its floor reference.</span></li><li><span style="--indent:0"><b>return</b> <code>needs_confirmation</code> with the ranked candidates.</span></li></ol></section><p class="equation-note">Use <i>S</i><sub>2</sub> = 0 when no candidate refers to a different node.
+    Records that share one node represent the same approximate location. Approximate associations remain below
+    the 0.80 ready threshold.</p></section>
+    <section class="method-section" id="implementation"><div class="section-marker">03 / IMPLEMENTATION</div>
+    <h2>Coordinate lookup connects localization to routing</h2><div class="equation"><div role="math" aria-label="The selected landmark resolves to a graph node, whose stored longitude, latitude and floor define the output anchor."><i>k</i><sup>*</sup> → <i>v</i><sub>k*</sub> → (<i>lon</i>(<i>v</i><sub>k*</sub>), <i>lat</i>(<i>v</i><sub>k*</sub>), <i>ℓ</i><sub>k*</sub>)</div><span class="equation-number">(5)</span></div><p>The workflow validates node and floor references against the scene. Pending workflow confirmations
+    expire after five minutes and bind to their originating journey context. In the phone session flow, the user
+    confirms the selected anchor before the session updates its current position and replans the remaining journey.
+    The returned coordinate denotes the associated map anchor near the landmark.</p>
+    <div class="method-note"><b>Execution boundary.</b> This pipeline describes live backend inference.
+    The static showcase uses prepared observations and anchor associations. Its preset scores belong to those
+    demonstrations; live matching scores come from the evidence-ranking workflow.</div><ul class="source-files"><li><a href="https://github.com/XanderZhou2022/AccessRoute_small_demo/blob/main/backend/agents/vision.ts" target="_blank" rel="noopener">Structured visual observation ↗</a><code>backend/agents/vision.ts</code></li><li><a href="https://github.com/XanderZhou2022/AccessRoute_small_demo/blob/main/backend/retrieval/map-index.ts" target="_blank" rel="noopener">Map index and spatial retrieval ↗</a><code>backend/retrieval/map-index.ts</code></li><li><a href="https://github.com/XanderZhou2022/AccessRoute_small_demo/blob/main/backend/agents/map-matcher.ts" target="_blank" rel="noopener">Retrieved-evidence matching ↗</a><code>backend/agents/map-matcher.ts</code></li><li><a href="https://github.com/XanderZhou2022/AccessRoute_small_demo/blob/main/backend/retrieval/rank.ts" target="_blank" rel="noopener">Lexical scoring, evidence validation and decisions ↗</a><code>backend/retrieval/rank.ts</code></li><li><a href="https://github.com/XanderZhou2022/AccessRoute_small_demo/blob/main/backend/workflows/localization.ts" target="_blank" rel="noopener">Localization output and pending confirmation ↗</a><code>backend/workflows/localization.ts</code></li></ul></section><a class="next-method" href="routing.html"><span>METHOD 01</span>
+    Policy-constrained route planning <span aria-hidden="true">→</span></a></article></div></div></main>
+<footer class="footer"><div class="wrap"><div class="footer-top"><div><a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 30 36" aria-hidden="true"><path d="M3 30V10a6 6 0 0 1 12 0v16a6 6 0 0 0 12 0V6"/></svg><span>AccessRoute<small> HK</small></span></a><p>Accessible first and last mile navigation.<br>Built for Hong Kong’s vertical city.</p></div><div class="footer-links"><a href="journey.html">The journey</a><a href="technology.html">The technology</a><a href="resources.html">Downloads</a><a href="https://github.com/XanderZhou2022/AccessRoute_small_demo" target="_blank" rel="noopener">GitHub ↗</a></div></div><div class="footer-bottom"><span>HumanRoute · Team 1022</span><span>Hong Kong · 2026</span><a class="backtop" href="#top">Back to top ↑</a></div></div></footer></body></html>

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Policy-Constrained Route Planning · AccessRoute HK</title><meta name="description" content="The graph formulation, policy costs and lexicographic Dijkstra algorithm behind AccessRoute routing.">
+<meta name="theme-color" content="#173c35"><meta property="og:title" content="Policy-Constrained Route Planning · AccessRoute HK"><meta property="og:description" content="The graph formulation, policy costs and lexicographic Dijkstra algorithm behind AccessRoute routing."><meta property="og:type" content="website"><meta property="og:image" content="https://xanderzhou2022.github.io/AccessRoute/assets/route-concept.png"><meta property="og:url" content="https://xanderzhou2022.github.io/AccessRoute/routing.html">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg"><link rel="stylesheet" href="assets/site.css?v=4"><link rel="stylesheet" href="assets/methods.css?v=2"><link rel="stylesheet" href="assets/method-lab.css?v=1"><script src="assets/site.js" defer></script><script type="module" src="assets/method-interactive.mjs?v=1"></script></head>
+<body id="top"><a class="skip" href="#main">Skip to content</a><header class="header"><div class="wrap header-inner"><a class="brand" href="index.html" aria-label="AccessRoute HK home"><svg class="brand-mark" viewBox="0 0 30 36" aria-hidden="true"><path d="M3 30V10a6 6 0 0 1 12 0v16a6 6 0 0 0 12 0V6"/></svg><span>AccessRoute<small> HK</small></span></a><button class="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button><nav id="site-nav" class="nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="journey.html">Journey</a><a href="technology.html" aria-current="page">Technology</a><a href="validation.html">Validation</a><a href="resources.html">Resources</a></nav></div></header>
+<main id="main"><div class="method-page"><div class="wrap">
+    <nav class="method-nav" aria-label="Technical methods"><a href="technology.html">Technology</a>
+    <a href="routing.html" aria-current="page">Route planning</a>
+    <a href="localization.html">Visual localization</a></nav>
+    <header class="method-header"><span class="method-kicker">ACCESSROUTE HK / METHOD 01</span>
+    <h1>Policy-Constrained Route Planning</h1><p>See how travel needs, rain and facility closures change a route. Then explore the algorithm behind the choice.</p>
+    <div class="method-contents"><a href="#try-it">Try it yourself</a><a href="#overview">Method overview</a><a href="#formulation">Formulation</a>
+    <a href="#algorithm">Algorithm</a><a href="#implementation">Implementation</a></div></header>
+    <section class="method-lab" id="try-it" data-explainer="routing" aria-labelledby="routing-lab-title">
+    <div class="lab-heading"><div><span class="lab-kicker">EXPLORE THE IDEA</span>
+    <h2 id="routing-lab-title">Change a setting. Watch the route change.</h2>
+    <p>The planner first removes connections you cannot use, then compares the remaining paths.</p></div>
+    <a class="lab-jump" href="#overview">Read the technical method ↓</a></div>
+    <noscript><p>Enable JavaScript to use this interactive explanation. The method figures and algorithms below remain readable.</p></noscript>
+    <div class="lab-layout"><form class="demo-controls" aria-label="Route planning controls">
+    <fieldset><legend>Getting around</legend><div class="choice-row">
+    <label><input type="radio" name="profile" value="walking" checked> Walking</label>
+    <label><input type="radio" name="profile" value="wheelchair"> Wheelchair</label>
+    <label><input type="radio" name="profile" value="stroller"> Stroller</label></div></fieldset>
+    <fieldset><legend>Weather</legend><div class="choice-row">
+    <label><input type="radio" name="weather" value="dry" checked> Dry</label>
+    <label><input type="radio" name="weather" value="rain"> Rain</label></div></fieldset>
+    <label class="select-label" for="route-goal">What matters most?</label>
+    <select id="route-goal" name="objective"><option value="balanced">Balance my needs</option>
+    <option value="shortest">Shortest distance</option><option value="sheltered">Least rain exposure</option></select>
+    <fieldset><legend>Try a facility closure</legend>
+    <label class="check-row"><input type="checkbox" name="closedA"> Close Lift A</label>
+    <label class="check-row"><input type="checkbox" name="closedB"> Close Lift B</label></fieldset>
+    <button class="lab-secondary" type="button" data-reset>Reset settings</button>
+    <p class="lab-footnote">An abstract teaching graph. Routes use the same policy and search code as the application.</p>
+    </form><div class="lab-workspace">
+    <div class="lab-status" aria-live="polite" aria-atomic="true" data-route-summary>Calculating the route…</div>
+    <div class="route-canvas" data-route-map></div>
+    <div class="map-legend"><span><i class="legend-line selected"></i> Selected</span><span><i class="legend-line"></i> Available</span><span><i class="legend-line blocked"></i> Unavailable</span></div>
+    <div class="route-comparison" data-route-comparison></div></div></div>
+    <div class="logic-walkthrough"><div class="lab-step-buttons" role="group" aria-label="Routing explanation steps">
+    <button type="button" data-route-step="0" aria-pressed="false"><span>1</span> Filter</button>
+    <button type="button" data-route-step="1" aria-pressed="false"><span>2</span> Compare</button>
+    <button type="button" data-route-step="2" aria-pressed="true"><span>3</span> Choose</button></div>
+    <p data-route-explanation></p></div>
+    <details class="lab-glossary"><summary>What does “best route” mean?</summary>
+    <p>A hard rule removes a connection entirely. A preference changes how the planner compares usable connections.
+    In rain-aware balanced mode, less uncovered distance wins first; cost breaks ties. Shortest mode keeps the
+    hard rules and compares distance. If every connection between floors is blocked, the planner returns no route.</p></details>
+    </section><figure class="method-figure" id="overview"><p class="figure-mobile-hint">Scroll the figure horizontally to read all panels ↔</p>
+    <div class="figure-scroll" tabindex="0" role="region" aria-label="Method figure; scroll horizontally on narrow screens">
+    <img src="assets/methods/route-planning.svg" alt="Three panels show a cross-floor mobility graph, edge filtering and objective costs, then lexicographic Dijkstra with a priority queue and current-anchor replanning." width="1050" height="600"></div>
+    <figcaption><b>Figure 1.</b> Policies construct a feasible graph before lexicographic Dijkstra selects a path. (a) Cross-floor graph representation. (b) Hard constraints and objective costs. (c) Search, reconstruction and replanning.</figcaption>
+    <div class="figure-downloads"><a href="assets/methods/route-planning.svg" target="_blank" rel="noopener">Open vector figure ↗</a>
+    <a href="assets/methods/route-planning.pdf" download>Download PDF ↓</a>
+    <a href="downloads/method-figures-source.zip" download>TikZ sources ↓</a></div></figure><article class="method-body"><section class="method-section" id="formulation">
+    <div class="section-marker">01 / FORMULATION</div><h2>Constraints define the feasible graph</h2>
+    <p>A mobility graph <i>G</i> = (<i>V</i>, <i>E</i>) stores public-path nodes and directed connections across floors.
+    Each node carries a map ID, longitude, latitude and optional floor. Each edge carries length, travel mode,
+    indoor and shelter flags, accessibility attributes and an optional facility ID.
+    A bidirectional edge contributes one arc in each direction.</p>
+    <p>The query context contains endpoints <i>s</i>, <i>t</i>, user constraints <i>u</i>, objective <i>o</i>,
+    weather <i>w</i> and the events active at time <i>τ</i>. A blocking policy excludes an edge;
+    each remaining policy contributes a finite, nonnegative penalty.</p><div class="equation"><div role="math" aria-label="Active events have active status and contain the query time in their validity interval."><i>A</i><sub>τ</sub> = {<i>a</i> : active(<i>a</i>) ∧ start(<i>a</i>) ≤ <i>τ</i> &lt; end(<i>a</i>)}</div><span class="equation-number">(1)</span></div><p class="equation-note">An event without an expiry has end(<i>a</i>) = ∞.</p><div class="equation"><div role="math" aria-label="The feasible edge set contains edges allowed by all hard constraints and active events."><i>E</i><sub>τ</sub> = {<i>e</i> ∈ <i>E</i> : allowed(<i>e</i>, <i>u</i>, <i>A</i><sub>τ</sub>)}</div><span class="equation-number">(2)</span></div><div class="method-columns"><div><h3>Hard constraints</h3><p>Policies check step-free access,
+    slope and width limits, opening times, facility closures and explicit exclusions. Strict accessibility mode
+    also rejects unknown accessibility attributes and missing dimensions required by the query.</p></div>
+    <div><h3>Event overlays</h3><p>Events target facility IDs or edge IDs. The planner constructs a fresh adjacency
+    list for each query, so closures and restorations leave the stored base graph intact.</p></div></div>
+    <h2 class="subsection-title">Exposure takes priority when the objective requires it</h2>
+    <p>For sheltered routing, the primary weight counts outdoor distance without shelter.
+    For indoor routing, it counts all outdoor distance. Other objectives use a zero primary weight.
+    The secondary weight combines an objective-dependent base cost with policy penalties.</p><div class="definition-table"><table><caption>Primary edge weight q<sub>o</sub>(e)</caption>
+    <thead><tr><th>Objective</th><th>Primary weight</th></tr></thead><tbody>
+    <tr><td>Sheltered</td><td>Edge length if outdoor and uncovered; zero otherwise.</td></tr>
+    <tr><td>Indoor</td><td>Edge length if outdoor; zero otherwise.</td></tr>
+    <tr><td>Balanced, shortest, least effort, fastest</td><td>Zero.</td></tr></tbody></table></div><div class="equation"><div role="math" aria-label="Secondary cost is the objective base cost plus nonnegative policy penalties."><i>c</i><sub>o</sub>(<i>e</i>) = <i>b</i><sub>o</sub>(<i>e</i>) + ∑<sub>p ∈ policies</sub> π<sub>p</sub>(<i>e</i>), &nbsp; π<sub>p</sub>(<i>e</i>) ≥ 0</div><span class="equation-number">(3)</span></div><p>The base cost <i>b</i><sub>o</sub> is edge length, except that fastest mode uses estimated
+    traversal and waiting time. Policy penalties depend on the objective: shortest mode suppresses soft penalties;
+    least-effort mode increases stair, escalator and slope penalties. The fastest score combines time with policy
+    penalties. It therefore expresses a routing preference score. Balanced mode switches to sheltered ordering
+    when rain or a covered-route preference applies.</p><div class="equation"><div role="math" aria-label="Choose a feasible path by minimizing its primary total first, then its secondary total."><i>P</i><sup>*</sup> = arg min<sub>P : s ↝ t, P ⊆ E<sub>τ</sub></sub><sup>lex</sup> 〈 ∑<sub>e ∈ P</sub> <i>q</i><sub>o</sub>(<i>e</i>), ∑<sub>e ∈ P</sub> <i>c</i><sub>o</sub>(<i>e</i>) 〉</div><span class="equation-number">(4)</span></div><p class="equation-note">Lexicographic order compares the first component, then breaks ties with the second.
+    Every edge weight has nonnegative components.</p></section>
+    <section class="method-section" id="algorithm"><div class="section-marker">02 / ALGORITHM</div>
+    <h2>A priority queue orders two-component path labels</h2><section class="algorithm" aria-label="Algorithm 1: Policy-Constrained Lexicographic Dijkstra">
+    <h3><strong>Algorithm 1</strong> Policy-Constrained Lexicographic Dijkstra</h3>
+    <div class="algorithm-contract"><p><b>Input:</b> Graph <i>G</i>, endpoints <i>s</i>, <i>t</i>, context (<i>u</i>, <i>o</i>, <i>w</i>, <i>A</i><sub>τ</sub>).</p><p><b>Output:</b> A feasible node / edge sequence, or <code>no_route</code> with policy reason codes.</p></div>
+    <ol class="algorithm-lines"><li><span style="--indent:0">Build adjacency over <i>E</i><sub>τ</sub>; attach weights (<i>q</i><sub>o</sub>, <i>c</i><sub>o</sub>) to each arc.</span></li><li><span style="--indent:0">Set <i>D</i>[<i>v</i>] ← (∞, ∞) and pred[<i>v</i>] ← ∅ for every node.</span></li><li><span style="--indent:0">Set <i>D</i>[<i>s</i>] ← (0, 0); push (<i>D</i>[<i>s</i>], <i>s</i>) into min-heap <i>Q</i>; settled ← ∅.</span></li><li><span style="--indent:0"><b>while</b> <i>Q</i> is nonempty <b>do</b></span></li><li><span style="--indent:1">(<i>d</i>, <i>v</i>) ← extract-min<sub>lex</sub>(<i>Q</i>).</span></li><li><span style="--indent:1"><b>if</b> <i>v</i> ∈ settled or <i>d</i> ≠ <i>D</i>[<i>v</i>] <b>then continue</b>.</span></li><li><span style="--indent:1"><b>if</b> <i>v</i> = <i>t</i> <b>then break</b>; otherwise add <i>v</i> to settled.</span></li><li><span style="--indent:1"><b>for each</b> feasible outgoing arc <i>e</i> = (<i>v</i>, <i>z</i>) <b>do</b></span></li><li><span style="--indent:2"><i>d</i>′ ← <i>D</i>[<i>v</i>] + (<i>q</i><sub>o</sub>(<i>e</i>), <i>c</i><sub>o</sub>(<i>e</i>)).</span></li><li><span style="--indent:2"><b>if</b> <i>d</i>′ &lt;<sub>lex</sub> <i>D</i>[<i>z</i>] <b>then</b></span></li><li><span style="--indent:3"><i>D</i>[<i>z</i>] ← <i>d</i>′; pred[<i>z</i>] ← (<i>v</i>, <i>e</i>); push (<i>d</i>′, <i>z</i>) into <i>Q</i>.</span></li><li><span style="--indent:0"><b>if</b> <i>D</i>[<i>t</i>] = (∞, ∞) <b>then return</b> <code>no_route</code>.</span></li><li><span style="--indent:0">Backtrack pred from <i>t</i> to <i>s</i>; aggregate distance, metrics, reasons and warnings.</span></li><li><span style="--indent:0"><b>return</b> the reconstructed route.</span></li></ol></section><p>The binary heap avoids a linear scan of unsettled nodes. On the stored mobility graphs,
+    search takes <i>O</i>((|<i>V</i>| + |<i>E</i>|) log |<i>V</i>|).
+    Context changes trigger a fresh search from the current anchor; the session retains completed journey stages.</p>
+    </section><section class="method-section" id="implementation"><div class="section-marker">03 / IMPLEMENTATION</div>
+    <h2>Route outputs retain policy decisions</h2><p>The route returns node IDs, edge IDs, distance,
+    preference cost, exposure and time metrics, policy reasons and data-quality warnings.
+    A segmentation pass converts its edge sequence into floor, transition, bridge and outdoor instructions.</p>
+    <div class="method-note"><b>Engine boundary.</b> This formulation describes the general graph engine.
+    The field-route wrapper also evaluates stored, ordered route sequences to preserve their exit
+    identities. It applies the same edge policies and uses graph search when connecting an anchor to a branch.</div><ul class="source-files"><li><a href="https://github.com/XanderZhou2022/AccessRoute_small_demo/blob/main/shared/routing/route.ts" target="_blank" rel="noopener">Search and multi-objective route generation ↗</a><code>shared/routing/route.ts</code></li><li><a href="https://github.com/XanderZhou2022/AccessRoute_small_demo/blob/main/shared/routing/policies.ts" target="_blank" rel="noopener">Accessibility, event and weather policies ↗</a><code>shared/routing/policies.ts</code></li><li><a href="https://github.com/XanderZhou2022/AccessRoute_small_demo/blob/main/shared/routing/metrics.ts" target="_blank" rel="noopener">Travel-time estimates and route metrics ↗</a><code>shared/routing/metrics.ts</code></li><li><a href="https://github.com/XanderZhou2022/AccessRoute_small_demo/blob/main/shared/journey/segment.ts" target="_blank" rel="noopener">Path segmentation ↗</a><code>shared/journey/segment.ts</code></li></ul></section><a class="next-method" href="localization.html"><span>METHOD 02</span>
+    Retrieval-augmented visual localization <span aria-hidden="true">→</span></a></article></div></div></main>
+<footer class="footer"><div class="wrap"><div class="footer-top"><div><a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 30 36" aria-hidden="true"><path d="M3 30V10a6 6 0 0 1 12 0v16a6 6 0 0 0 12 0V6"/></svg><span>AccessRoute<small> HK</small></span></a><p>Accessible first and last mile navigation.<br>Built for Hong Kong’s vertical city.</p></div><div class="footer-links"><a href="journey.html">The journey</a><a href="technology.html">The technology</a><a href="resources.html">Downloads</a><a href="https://github.com/XanderZhou2022/AccessRoute_small_demo" target="_blank" rel="noopener">GitHub ↗</a></div></div><div class="footer-bottom"><span>HumanRoute · Team 1022</span><span>Hong Kong · 2026</span><a class="backtop" href="#top">Back to top ↑</a></div></div></footer></body></html>

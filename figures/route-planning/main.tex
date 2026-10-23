@@ -1,0 +1,74 @@
+\documentclass[border=4pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning}
+\definecolor{ink}{HTML}{24313E}
+\definecolor{blue}{HTML}{4477AA}
+\definecolor{teal}{HTML}{338899}
+\definecolor{amber}{HTML}{BB7711}
+\definecolor{red}{HTML}{AA4455}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=-1cm,text=ink,
+ font=\fontsize{9}{10.5}\selectfont,
+ arr/.style={-{Stealth[length=2mm]},line width=.65pt,draw=ink},
+ panel/.style={rounded corners=2mm,line width=.6pt},
+ box/.style={draw=blue!55,fill=white,rounded corners=1mm,align=center,font=\fontsize{8.7}{10.3}\selectfont,minimum height=1cm,text width=3.15cm,inner sep=3pt},
+ vertex/.style={circle,draw=blue,fill=white,inner sep=0pt,minimum size=3mm},
+ smalltext/.style={font=\fontsize{8.7}{10.3}\selectfont,align=left},
+ title/.style={font=\fontsize{11}{13}\selectfont\bfseries,anchor=west}]
+\path[use as bounding box] (0,0) rectangle (18,10.2);
+\draw[panel,draw=blue!45,fill=blue!3] (0,0) rectangle (4.35,10.2);
+\draw[panel,draw=amber!50,fill=amber!2] (4.6,0) rectangle (18,4.25);
+\draw[panel,draw=teal!50,fill=teal!2] (4.6,4.5) rectangle (18,10.2);
+\node[title] at (.25,.43) {(a) Mobility graph};
+\node[smalltext,anchor=north west,text width=3.8cm] at (.25,.83) {Cross-floor graph $G=(V,E)$\\Source $s$ and destination $t$.};
+% Symbolic floor layers encode graph structure.
+\foreach \dy/\lab in {0/{\ell_i},1.6/{\ell_j}} {
+ \draw[draw=blue!30,fill=white] (.4,{2.15+\dy}) -- (2.8,{2.15+\dy}) -- (3.9,{2.9+\dy}) -- (1.5,{2.9+\dy}) -- cycle;
+ \node[smalltext,anchor=west] at (.4,{1.94+\dy}) {Floor $\lab$};
+}
+\foreach \id/\xx/\yy in {a/.9/2.4,b/1.9/2.4,c/3.05/2.65,d/1.25/4.0,e/2.25/4.0,f/3.25/4.25}
+ \node[vertex] (\id) at (\xx,\yy) {};
+\draw[arr,blue] (a)--(b); \draw[arr,blue] (b)--(c);
+\draw[arr,blue] (d)--(e); \draw[arr,blue] (e)--(f);
+\draw[arr,teal,dashed] (b)--(e);
+\node[smalltext,anchor=west,text=teal] at (2.43,3.35) {transition};
+\node[smalltext,anchor=north west,text width=3.8cm] at (.25,4.9)
+ {\textbf{Node attributes}\\ID, longitude, latitude, floor\\[7pt]
+ \textbf{Edge attributes}\\Length, mode, slope, width,\\indoor / sheltered, facility ID};
+\draw[blue!25] (.25,7.2)--(4.1,7.2);
+\node[smalltext,anchor=north west,text width=3.8cm] at (.25,7.48)
+ {\textbf{Immutable base graph}\\Query-specific adjacency\\from policy evaluation.\\[7pt]
+ \textbf{Query context}\\Constraints $u$, objective $o$\\Weather $w$, events $A_\tau$};
+
+\node[title] at (4.87,.43) {(b) Policy evaluation};
+\node[smalltext,anchor=west] at (4.87,.87) {Evaluate each edge against the current context before search.};
+\node[box,text width=3.45cm] (hard) at (6.95,1.9) {\textbf{1. Hard constraints}\\Access and dimensions\\Hours and closures};
+\node[box,draw=amber!60,text width=3.45cm] (soft) at (11.35,1.9) {\textbf{2. Objective costs}\\Distance / time\\Nonnegative penalties};
+\node[box,draw=teal!60,text width=2.45cm] (pair) at (15.6,1.9) {\textbf{3. Search weights}\\$(q_o(e),c_o(e))$};
+\draw[arr] (hard)--(soft); \draw[arr] (soft)--(pair);
+\node[smalltext,anchor=north west,text width=5.9cm] at (4.96,2.78)
+ {$E_\tau=\{e\in E:\operatorname{allowed}(e,u,A_\tau)\}$\\[5pt]
+ Blocked edges never enter the adjacency list.};
+\node[smalltext,anchor=north west,text width=6.4cm] at (11.25,2.78)
+ {$q_o$: exposed / outdoor length, or zero\\[5pt]
+ $c_o$: base cost $+$ policy penalties};
+
+\node[title] at (4.87,4.94) {(c) Lexicographic Dijkstra};
+\node[smalltext,anchor=west] at (4.87,5.4) {Compare exposure first when required; compare secondary cost next.};
+\node[box,text width=2.8cm] (init) at (6.55,6.65) {\textbf{Initialize}\\$D(s)=(0,0)$\\$D(v\ne s)=(\infty,\infty)$};
+\node[box,text width=3.05cm,draw=teal!60] (relax) at (10.8,6.65) {\textbf{Extract and relax}\\Pop minimum label\\Relax outgoing edges};
+\node[box,text width=2.8cm,draw=teal!60] (out) at (15.3,6.65) {\textbf{Reconstruct}\\Node / edge sequence\\or \texttt{no\_route}};
+\draw[arr] (init)--node[above,font=\small] {$Q$}(relax);
+\draw[arr] (relax)--node[above,font=\small] {$t$ reached}(out);
+\draw[arr] (relax.south) -- ++(0,.45) -- ++(-1.65,0) |- (relax.west);
+\node[smalltext,anchor=west] at (11.25,7.68) {repeat until $t$ or queue exhaustion};
+\node[anchor=west,font=\fontsize{11}{13}\selectfont] at (5.05,8.37)
+ {$P^*=\displaystyle\arg\min_{P:s\leadsto t}^{\mathrm{lex}}
+ \left(\sum_{e\in P}q_o(e),\ \sum_{e\in P}c_o(e)\right)$};
+\draw[draw=teal!35,fill=white,rounded corners=1mm] (4.96,9.06) rectangle (17.63,9.9);
+\node[smalltext,anchor=west] at (5.15,9.48)
+ {\textbf{Replanning}\quad Update current anchor or event overlay; rerun search on the remaining journey.};
+\end{tikzpicture}
+\end{document}
