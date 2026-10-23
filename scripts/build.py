@@ -4,7 +4,7 @@ import json
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'dist'
-DEMO='https://xanderzhou2022.github.io/AccessRoute_small_demo/'
+DEMO='https://xanderzhou2022.github.io/AccessRoute_small_demo/showcase'
 CODE='https://github.com/XanderZhou2022/AccessRoute_small_demo'
 SITE='https://xanderzhou2022.github.io/AccessRoute/'
 ARROW='<span class="arrow" aria-hidden="true">↗</span>'
@@ -30,7 +30,16 @@ def resource(href,title,description,format,download=False):
     return f'<a class="resource-row" href="{href}"'+(' download' if download else '')+f'><div><h3>{title}</h3><p>{description}</p></div><span class="format">{format}</span>{ARROW}</a>'
 
 home='''<div class="wrap"><section class="hero"><div class="hero-copy"><span class="eyebrow">Hong Kong, floor by floor</span><h1>Accessible routes. Personal journeys.</h1><p class="lead">Routes shaped by your mobility needs, from the first lift to the final street crossing.</p><div class="links"><a class="button" href="journey.html">Explore the journey <span class="arrow" aria-hidden="true">↗</span></a><a class="text-link" href="resources.html">Project materials</a></div></div><figure class="hero-visual"><span class="visual-label">The AccessRoute experience</span><img class="screen" src="assets/screens/overview.png" width="390" height="844" alt="AccessRoute phone interface with a route overview, 3D map and walking stages"><span class="side-note">PLANNED AROUND YOUR NEEDS</span><figcaption class="visual-caption">From PopCorn 2 to Kowloon Tong</figcaption></figure></section><div class="hero-meta"><div><strong>12</strong> mapped scenes</div><div><strong>4</strong> AI workflows</div><div><strong>3</strong> journey stages</div></div></div>
-<section class="section"><div class="wrap"><div class="section-head"><div><span class="eyebrow">Explore AccessRoute</span><h2>Explore the project.</h2></div><p>Follow a journey, look inside the system, or go straight to the project materials.</p></div><div class="directory">'''
+'''
+home=home.replace('<a class="button" href="journey.html">Explore the journey',f'<a class="button" href="{DEMO}" target="_blank" rel="noopener">Open the live demo')
+home=home.replace('<a class="text-link" href="resources.html">Project materials</a>','<a class="text-link" href="#showcase">Watch the videos</a>')
+home+=f'''<section class="section" id="showcase"><div class="wrap split"><div><span class="eyebrow">Try AccessRoute</span><h2>Demo and videos</h2><p>Open the online demo or watch the project in action.</p><div class="links"><a class="button" href="{DEMO}" target="_blank" rel="noopener">Open the live demo {ARROW}</a><a class="text-link" href="{SITE}index.html">Project home</a></div></div><div aria-label="Project videos">'''
+for n,url,title,desc in [
+ ('01','https://youtu.be/Tlcvxx7CijE','Field demonstration','Watch the on-site demonstration.'),
+ ('02','https://www.youtube.com/watch?v=6SW-bbH5f8U','Demo video 1','Watch the demo on YouTube.'),
+ ('03','https://www.youtube.com/watch?v=qnFK27wVjt4','Full demo','Watch the complete demo recording.')]:
+    home+=f'<a class="directory-item" href="{url}" target="_blank" rel="noopener"><span class="num">{n}</span><div><h3>{title}</h3><p>{desc}</p></div>{ARROW}</a>'
+home+='''</div></div></section><section class="section"><div class="wrap"><div class="section-head"><div><span class="eyebrow">Explore AccessRoute</span><h2>Explore the project.</h2></div><p>Follow a journey, look inside the system, or go straight to the project materials.</p></div><div class="directory">'''
 for n,url,title,desc in [
  ('01','journey.html','The journey','See the interface, route choices and Kowloon Tong field journey.'),
  ('02','technology.html','The technology','How map data, AI workflows and route planning work together.'),
