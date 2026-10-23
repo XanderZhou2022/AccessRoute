@@ -1,0 +1,261 @@
+{
+  "title": "AccessRoute HK service budgets and timing evidence",
+  "basis": "Technical report section 23, tables 2–6; historical list-price snapshot checked 2026-10-11. Token counts are workload budgets, not billed usage.",
+  "currency": "USD",
+  "price_date": "2026-10-11",
+  "models": [
+    {
+      "id": "T",
+      "name": "Qwen3.8-Max",
+      "input_per_million": 2.0,
+      "output_per_million": 6.0
+    },
+    {
+      "id": "V",
+      "name": "Qwen3-VL-Plus",
+      "input_per_million": 0.2,
+      "output_per_million": 1.6
+    }
+  ],
+  "calls": [
+    {
+      "id": "preferences",
+      "name": "Preference parsing",
+      "model": "T",
+      "input": 1200,
+      "output": 180,
+      "usd": 0.00348
+    },
+    {
+      "id": "landmark_observation",
+      "name": "Landmark observation",
+      "model": "V",
+      "input": 2400,
+      "output": 320,
+      "usd": 0.000992
+    },
+    {
+      "id": "obstacle_observation",
+      "name": "Obstacle observation",
+      "model": "V",
+      "input": 2600,
+      "output": 380,
+      "usd": 0.001128
+    },
+    {
+      "id": "landmark_matching",
+      "name": "Landmark evidence matching",
+      "model": "T",
+      "input": 1800,
+      "output": 240,
+      "usd": 0.00504
+    },
+    {
+      "id": "obstacle_matching",
+      "name": "Obstacle evidence matching",
+      "model": "T",
+      "input": 2200,
+      "output": 260,
+      "usd": 0.00596
+    },
+    {
+      "id": "guidance",
+      "name": "Cantonese guidance",
+      "model": "T",
+      "input": 450,
+      "output": 70,
+      "usd": 0.00132
+    }
+  ],
+  "workflows": [
+    {
+      "id": "preferences",
+      "name": "Understand preferences",
+      "composition": [
+        "preferences"
+      ]
+    },
+    {
+      "id": "localization",
+      "name": "Locate from a landmark photo",
+      "composition": [
+        "landmark_observation",
+        "landmark_matching"
+      ]
+    },
+    {
+      "id": "obstacle",
+      "name": "Match an obstacle photo",
+      "composition": [
+        "obstacle_observation",
+        "obstacle_matching"
+      ]
+    },
+    {
+      "id": "guidance",
+      "name": "Write one guidance sentence",
+      "composition": [
+        "guidance"
+      ]
+    }
+  ],
+  "journeys": [
+    {
+      "name": "Ordinary journey",
+      "preferences": 1,
+      "guidance": 13,
+      "localization": 0,
+      "obstacle": 0,
+      "calls": 14,
+      "input": 7050,
+      "output": 1090,
+      "usd": 0.02064
+    },
+    {
+      "name": "With location assistance",
+      "preferences": 1,
+      "guidance": 13,
+      "localization": 1,
+      "obstacle": 0,
+      "calls": 16,
+      "input": 11250,
+      "output": 1650,
+      "usd": 0.026672
+    },
+    {
+      "name": "With both photo workflows",
+      "preferences": 1,
+      "guidance": 15,
+      "localization": 1,
+      "obstacle": 1,
+      "calls": 20,
+      "input": 16950,
+      "output": 2430,
+      "usd": 0.0364
+    }
+  ],
+  "timing": [
+    {
+      "item": "Text API connectivity sample",
+      "value": "About 3.4 s",
+      "kind": "Observed sample",
+      "scope": "One successful solar-energy text request, HTTP 200; live integration note dated 2026-10-04. This request differs from the navigation workflows."
+    },
+    {
+      "item": "Model request timeout",
+      "value": "60 s / call",
+      "kind": "Configuration",
+      "scope": "The provider aborts an individual model request after 60,000 ms. This limit describes a request deadline."
+    },
+    {
+      "item": "Navigation workflow latency",
+      "value": "Median / p95 pending",
+      "kind": "Measurement pending",
+      "scope": "The saved integration note records successful workflow outcomes without a latency distribution. Photo workflows contain two sequential model calls plus local processing."
+    }
+  ],
+  "component_targets": [
+    {
+      "metric": "Preference field accuracy",
+      "criterion": "Each requested field matches its reference value.",
+      "target": "97.5%"
+    },
+    {
+      "metric": "Complete-request accuracy",
+      "criterion": "All requested fields and retained profile values match.",
+      "target": "94.0%"
+    },
+    {
+      "metric": "Numeric-condition accuracy",
+      "criterion": "Slope, width, units, and normalized values match.",
+      "target": "99.0%"
+    },
+    {
+      "metric": "Landmark-name accuracy",
+      "criterion": "The photo observation identifies the annotated name.",
+      "target": "94.0%"
+    },
+    {
+      "metric": "Shop-identifier accuracy",
+      "criterion": "The normalized shop identifier matches exactly.",
+      "target": "95.0%"
+    },
+    {
+      "metric": "Visible-floor accuracy",
+      "criterion": "The observation matches the annotated visible floor.",
+      "target": "96.0%"
+    },
+    {
+      "metric": "Obstacle-presence accuracy",
+      "criterion": "The predicted presence or absence matches the image label.",
+      "target": "95.0%"
+    },
+    {
+      "metric": "Obstacle-type accuracy",
+      "criterion": "The predicted category matches the reference category.",
+      "target": "93.0%"
+    },
+    {
+      "metric": "Location top-1 accuracy",
+      "criterion": "The first candidate matches the reference public anchor.",
+      "target": "92.0%"
+    },
+    {
+      "metric": "Location top-3 accuracy",
+      "criterion": "The first three candidates include the reference anchor.",
+      "target": "98.0%"
+    },
+    {
+      "metric": "Obstacle-target accuracy",
+      "criterion": "The first candidate identifies the correct facility or passage.",
+      "target": "95.0%"
+    },
+    {
+      "metric": "Structured-output accuracy",
+      "criterion": "The response satisfies the task schema on the first call.",
+      "target": "99.5%"
+    },
+    {
+      "metric": "Guidance fact accuracy",
+      "criterion": "Action, facility, distance, and floors match the route facts.",
+      "target": "99.0%"
+    },
+    {
+      "metric": "Cantonese expression accuracy",
+      "criterion": "A fluent speaker accepts grammar, wording, and action clarity.",
+      "target": "96.0%"
+    }
+  ],
+  "workflow_targets": [
+    {
+      "metric": "Language-to-route accuracy",
+      "criterion": "Confirmed fields match the reference and the route satisfies them.",
+      "target": "92.0%"
+    },
+    {
+      "metric": "Photo-to-position accuracy",
+      "criterion": "Confirmation selects the reference scene, floor, and public node.",
+      "target": "90.0%"
+    },
+    {
+      "metric": "Obstacle-to-reroute accuracy",
+      "criterion": "Confirmation closes the correct object and the route avoids it.",
+      "target": "91.0%"
+    },
+    {
+      "metric": "Lift-required journey accuracy",
+      "criterion": "Every floor change uses an eligible lift throughout the journey.",
+      "target": "99.0%"
+    },
+    {
+      "metric": "Sheltered-route accuracy",
+      "criterion": "The route meets the active shelter objective and access conditions.",
+      "target": "98.0%"
+    },
+    {
+      "metric": "Guidance-to-step accuracy",
+      "criterion": "Every instruction matches its active segment after progress or rerouting.",
+      "target": "98.0%"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+REPORT EXTRACT — source: product-manual/tables/quality-cost.tex
+Published in downloads/product-manual.pdf, section 23, tables 2–6.
+Price check date stated by the report: 2026-10-11.
+
+\section{Accuracy criteria and service cost}
+\subsection{Check each GenAI output}
+Table~\ref{tab:component-accuracy} defines acceptance targets for the four GenAI services. Each percentage specifies the minimum fraction of cases that must satisfy the stated criterion. Check preference fields against the traveller's request and existing profile; check visual observations against annotated photographs; check map identities against scene records; and check guidance against the current route facts.
+
+\begin{table*}[!t]\centering\small
+\begin{tabular}{p{.27\textwidth}p{.55\textwidth}r}
+\toprule
+Accuracy metric & Correctness criterion & Target\\
+\midrule
+Preference field accuracy & Each requested field matches its reference value. & 97.5\%\\
+Complete-request accuracy & All requested fields and retained profile values match. & 94.0\%\\
+Numeric-condition accuracy & Slope, width, units, and normalized values match. & 99.0\%\\
+Landmark-name accuracy & The photo observation identifies the annotated name. & 94.0\%\\
+Shop-identifier accuracy & The normalized shop identifier matches exactly. & 95.0\%\\
+Visible-floor accuracy & The observation matches the annotated visible floor. & 96.0\%\\
+Obstacle-presence accuracy & The predicted presence or absence matches the image label. & 95.0\%\\
+Obstacle-type accuracy & The predicted category matches the reference category. & 93.0\%\\
+Location top-1 accuracy & The first candidate matches the reference public anchor. & 92.0\%\\
+Location top-3 accuracy & The first three candidates include the reference anchor. & 98.0\%\\
+Obstacle-target accuracy & The first candidate identifies the correct facility or passage. & 95.0\%\\
+Structured-output accuracy & The response satisfies the task schema on the first call. & 99.5\%\\
+Guidance fact accuracy & Action, facility, distance, and floors match the route facts. & 99.0\%\\
+Cantonese expression accuracy & A fluent speaker accepts grammar, wording, and action clarity. & 96.0\%\\
+\bottomrule
+\end{tabular}
+\caption{GenAI accuracy acceptance targets and their correctness criteria.}
+\label{tab:component-accuracy}\end{table*}
+
+For a field metric, divide correct field values by all checked field values. For a request or image metric, divide correct cases by all cases. Top-3 accuracy counts a case once when any of its first three candidates matches the reference anchor. Obstacle-presence checks include both obstacle and clear-path images. An image with no visible floor has a reference value of null. Guidance fact accuracy requires every supplied navigation fact to remain correct; the expression check assesses the same sentence's Cantonese grammar and clarity.
+
+\subsection{Check complete user workflows}
+Table~\ref{tab:workflow-accuracy} sets acceptance targets for the complete interaction. Each case includes input, analysis, candidate review where applicable, confirmation, and the resulting journey state. A successful case must satisfy every condition in its row.
+
+\begin{table*}[!t]\centering\small
+\begin{tabular}{p{.25\textwidth}p{.57\textwidth}r}
+\toprule
+Workflow & Success criterion & Target\\
+\midrule
+Language-to-route accuracy & Confirmed fields match the reference and the route satisfies them. & 92.0\%\\
+Photo-to-position accuracy & Confirmation selects the reference scene, floor, and public node. & 90.0\%\\
+Obstacle-to-reroute accuracy & Confirmation closes the correct object and the route avoids it. & 91.0\%\\
+Lift-required journey accuracy & Every floor change uses an eligible lift throughout the journey. & 99.0\%\\
+Sheltered-route accuracy & The route meets the active shelter objective and access conditions. & 98.0\%\\
+Guidance-to-step accuracy & Every instruction matches its active segment after progress or rerouting. & 98.0\%\\
+\bottomrule
+\end{tabular}
+\caption{Complete-workflow accuracy acceptance targets.}
+\label{tab:workflow-accuracy}\end{table*}
+
+Use scene and object identifiers to judge position and obstacle correctness. For required-lift and sheltered routes, compare passage eligibility and route objective values with the scene graph. For guidance, compare each sentence with the active segment after every step completion or route update. These checks connect the page result to the same backend fields that drive navigation.
+
+\subsection{Convert tokens into model charges}
+The configured model names are \texttt{qwen3.8-max} for text and \texttt{qwen3-vl-plus} for images. Table~\ref{tab:model-prices} records their published QwenCloud pay-as-you-go rates, checked on 11 October 2026. The vision rate applies to requests with at most 32,000 input tokens. The calculation uses ordinary input and output list prices.
+
+\begin{table}[!htbp]\centering\small
+\begin{tabular}{lrr}
+\toprule
+Model & Input & Output\\
+\midrule
+Qwen3.8-Max & 2.00 & 6.00\\
+Qwen3-VL-Plus & 0.20 & 1.60\\
+\bottomrule
+\end{tabular}
+\caption{Published model prices in USD per million tokens.}
+\label{tab:model-prices}\end{table}
+
+Price sources: \href{https://www.qwencloud.com/models/qwen3.8-max}{Qwen3.8-Max} and \href{https://www.qwencloud.com/models/qwen3-vl-plus}{Qwen3-VL-Plus}. For one model call, let $I$ and $O$ denote billed input and output tokens, and let $p_I$ and $p_O$ denote the corresponding prices per million tokens. Its model charge is
+\begin{equation}
+C=\frac{I p_I+O p_O}{1{,}000{,}000}.
+\end{equation}
+Input accounting includes system instructions, request context, and image tokens for visual calls. Output accounting includes all billable generated tokens, including reasoning tokens when the selected mode produces them. Table~\ref{tab:token-budget} assigns an input and output token budget to each GenAI call and converts that budget into a USD charge.
+
+\begin{table*}[!t]\centering\small
+\begin{tabular}{p{.32\textwidth}crrrr}
+\toprule
+GenAI call & Model & Input & Output & Total & USD/call\\
+\midrule
+Preference parsing & T & 1,200 & 180 & 1,380 & 0.003480\\
+Landmark observation & V & 2,400 & 320 & 2,720 & 0.000992\\
+Obstacle observation & V & 2,600 & 380 & 2,980 & 0.001128\\
+Landmark evidence matching & T & 1,800 & 240 & 2,040 & 0.005040\\
+Obstacle evidence matching & T & 2,200 & 260 & 2,460 & 0.005960\\
+Cantonese guidance & T & 450 & 70 & 520 & 0.001320\\
+\bottomrule
+\end{tabular}
+\caption{Per-call token budgets and model charges; T denotes Qwen3.8-Max and V denotes Qwen3-VL-Plus.}
+\label{tab:token-budget}\end{table*}
+
+For preference parsing, 1,200 input tokens at USD~2.00 per million and 180 output tokens at USD~6.00 per million give USD~0.003480. Landmark localization combines one visual observation and one landmark-matching call: 4,200 input tokens, 560 output tokens, and USD~0.006032. An obstacle-photo workflow combines its observation and matching calls: 4,800 input tokens, 640 output tokens, and USD~0.007088. Each guidance sentence uses one text call.
+
+\subsection{Budget a complete journey}
+Table~\ref{tab:journey-budget} combines these calls into three interaction patterns. An ordinary journey uses one preference request and 13 guidance calls. A location-assistance journey adds one landmark-photo workflow. A journey with both assistance types adds one landmark-photo workflow, one obstacle-photo workflow, and two further guidance calls after route updates. These are explicit workload budgets: each row's call count and charge follow from its listed interaction pattern.
+
+\begin{table*}[!t]\centering\small
+\begin{tabular}{p{.32\textwidth}rrrrr}
+\toprule
+Journey workload & Calls & Input & Output & USD/journey & USD/1,000\\
+\midrule
+Preferences + 13 guidance steps & 14 & 7,050 & 1,090 & 0.020640 & 20.640\\
+Above + one landmark photo & 16 & 11,250 & 1,650 & 0.026672 & 26.672\\
+Preferences + both photo workflows + 15 guidance calls & 20 & 16,950 & 2,430 & 0.036400 & 36.400\\
+\bottomrule
+\end{tabular}
+\caption{Journey token budgets and model charges for three interaction patterns.}
+\label{tab:journey-budget}\end{table*}
+
+Sum the call charges to obtain a workflow or journey charge, then multiply by the journey count for volume budgeting. Repeated page viewing, deterministic route search, user confirmation, and session synchronization add zero GenAI calls. The tables account for model inference; map services, hosting, storage, and browser speech belong to their own service-cost categories.
+
+
+TIMING EVIDENCE
+# Qwen 真實 API 聯調
+
+測試日期：2026-10-04。服務端點由使用者提供。
+
+
+Successful generic text connectivity request: HTTP 200, approximately 3.4 seconds.
+Provider source: backend/providers/qwen.ts; AbortSignal.timeout(60_000).
+These records contain no navigation-workflow median or p95 measurements.

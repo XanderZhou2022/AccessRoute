@@ -69,3 +69,9 @@ Product screenshots and the two videos come from the AccessRoute project materia
 The regression summary records the 18 October 2026 run against the local `accessroute-hk` source: 132 tests across 16 files. Test cases and outcomes are listed in the downloadable JSON record.
 
 Map from Lands Department © Government of the Hong Kong Special Administrative Region. Official map and transit data retains its source terms. See the website's [technical references](https://xanderzhou2022.github.io/AccessRoute/resources.html#references).
+
+## API cost and timing page
+
+`service-budget.html` reproduces the technical report’s section 23 tables and links the dated timing evidence. The page distinguishes historical price snapshots, token workload budgets, observed timing, request deadlines and acceptance targets. `dist/downloads/service-budget.json` holds the data; `scripts/service_budget.py` generates the tables, and `dist/assets/service-budget.mjs` calculates adjustable workloads locally without model calls. JSON, CSV and a report extract are downloadable.
+
+Run `node scripts/check_service_budget.mjs` to check all per-call arithmetic, report journey workloads and calculator edge cases.

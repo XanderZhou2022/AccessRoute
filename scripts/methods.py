@@ -39,7 +39,7 @@ def shell(kind, title, subtitle, content):
     return f'''<div class="method-page"><div class="wrap">
     <nav class="method-nav" aria-label="Technical methods"><a href="technology.html">Technology</a>
     <a href="routing.html"{' aria-current="page"' if kind == 'routing' else ''}>Route planning</a>
-    <a href="localization.html"{' aria-current="page"' if kind == 'localization' else ''}>Visual localization</a></nav>
+    <a href="localization.html"{' aria-current="page"' if kind == 'localization' else ''}>Visual localization</a><a href="service-budget.html">API cost &amp; timing</a></nav>
     <header class="method-header"><span class="method-kicker">ACCESSROUTE HK / METHOD {'01' if kind == 'routing' else '02'}</span>
     <h1>{title}</h1><p>{subtitle}</p>
     <div class="method-contents"><a href="#try-it">Try it yourself</a><a href="#overview">Method overview</a>{('<a href="#rag-detail">RAG data flow</a>' if kind == 'localization' else '')}<a href="#formulation">Formulation</a>

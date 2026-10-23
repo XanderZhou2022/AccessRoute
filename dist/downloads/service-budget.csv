@@ -1,0 +1,10 @@
+kind,name,model,input_tokens,output_tokens,calls,usd,basis
+call,Preference parsing,T,1200,180,1,0.003480,Budget; 2026-10-11 report prices
+call,Landmark observation,V,2400,320,1,0.000992,Budget; 2026-10-11 report prices
+call,Obstacle observation,V,2600,380,1,0.001128,Budget; 2026-10-11 report prices
+call,Landmark evidence matching,T,1800,240,1,0.005040,Budget; 2026-10-11 report prices
+call,Obstacle evidence matching,T,2200,260,1,0.005960,Budget; 2026-10-11 report prices
+call,Cantonese guidance,T,450,70,1,0.001320,Budget; 2026-10-11 report prices
+journey,Ordinary journey,mixed,7050,1090,14,0.020640,Budget; listed workload
+journey,With location assistance,mixed,11250,1650,16,0.026672,Budget; listed workload
+journey,With both photo workflows,mixed,16950,2430,20,0.036400,Budget; listed workload
