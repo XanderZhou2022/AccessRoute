@@ -7,6 +7,7 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
 
 /* Keep introductory sections compact so the page content starts sooner. */
+.qr-links{display:flex;flex-wrap:wrap;gap:24px;margin-top:30px}.qr-links a{display:block;font-size:13px}.qr-links img{width:128px;height:128px;margin-bottom:9px}.qr-links span{display:flex;align-items:center;justify-content:space-between;gap:12px}.qr-links .arrow{font-size:16px}.qr-links a:hover{color:var(--green)}
 .page-head + *{margin-top:0}
 main > .wrap:first-child + .section{padding-top:42px}
 @media(min-width:701px){.hero{padding:36px 0;min-height:0}.hero-visual{min-height:410px}.hero-visual .screen{width:160px}.hero-copy .lead{margin:18px 0 24px}.hero-copy .eyebrow{margin-bottom:16px}}

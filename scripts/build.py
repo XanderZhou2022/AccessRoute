@@ -7,6 +7,7 @@ OUT=ROOT/'dist'
 DEMO='https://xanderzhou2022.github.io/AccessRoute_small_demo/showcase'
 CODE='https://github.com/XanderZhou2022/AccessRoute_small_demo'
 SITE='https://xanderzhou2022.github.io/AccessRoute/'
+REPORT=SITE+'downloads/product-manual.pdf?v=20261018-authors'
 ARROW='<span class="arrow" aria-hidden="true">↗</span>'
 pages=[('index.html','Home'),('journey.html','Journey'),('technology.html','Technology'),('validation.html','Validation'),('resources.html','Resources')]
 brand='<svg class="brand-mark" viewBox="0 0 30 36" aria-hidden="true"><path d="M3 30V10a6 6 0 0 1 12 0v16a6 6 0 0 0 12 0V6"/></svg><span>AccessRoute<small> HK</small></span>'
@@ -17,7 +18,7 @@ def layout(file,title,description,content):
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{escape(title)} · AccessRoute HK</title><meta name="description" content="{escape(description)}">
 <meta name="theme-color" content="#173c35"><meta property="og:title" content="{escape(title)} · AccessRoute HK"><meta property="og:description" content="{escape(description)}"><meta property="og:type" content="website"><meta property="og:image" content="{SITE}assets/route-concept.png"><meta property="og:url" content="{SITE}{'' if file=='index.html' else file}">
-<link rel="icon" type="image/svg+xml" href="assets/favicon.svg"><link rel="stylesheet" href="assets/site.css?v=3"><script src="assets/site.js" defer></script></head>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg"><link rel="stylesheet" href="assets/site.css?v=4"><script src="assets/site.js" defer></script></head>
 <body id="top"><a class="skip" href="#main">Skip to content</a><header class="header"><div class="wrap header-inner"><a class="brand" href="index.html" aria-label="AccessRoute HK home">{brand}</a><button class="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button><nav id="site-nav" class="nav" aria-label="Main navigation">{nav}</nav></div></header>
 <main id="main">{content}</main>
 <footer class="footer"><div class="wrap"><div class="footer-top"><div><a class="brand" href="index.html">{brand}</a><p>Accessible first and last mile navigation.<br>Built for Hong Kong’s vertical city.</p></div><div class="footer-links"><a href="journey.html">The journey</a><a href="technology.html">The technology</a><a href="resources.html">Downloads</a><a href="{CODE}" target="_blank" rel="noopener">GitHub ↗</a></div></div><div class="footer-bottom"><span>HumanRoute · Team 1022</span><span>Hong Kong · 2026</span><a class="backtop" href="#top">Back to top ↑</a></div></div></footer></body></html>'''
@@ -33,7 +34,7 @@ home='''<div class="wrap"><section class="hero"><div class="hero-copy"><span cla
 '''
 home=home.replace('<a class="button" href="journey.html">Explore the journey',f'<a class="button" href="{DEMO}" target="_blank" rel="noopener">Open the live demo')
 home=home.replace('<a class="text-link" href="resources.html">Project materials</a>','<a class="text-link" href="#showcase">Watch the videos</a>')
-home+=f'''<section class="section" id="showcase"><div class="wrap split"><div><span class="eyebrow">Try AccessRoute</span><h2>Demo and videos</h2><p>Open the online demo or watch the project in action.</p><div class="links"><a class="button" href="{DEMO}" target="_blank" rel="noopener">Open the live demo {ARROW}</a><a class="text-link" href="{SITE}index.html">Project home</a></div></div><div aria-label="Project videos">'''
+home+=f'''<section class="section" id="showcase"><div class="wrap split"><div><span class="eyebrow">Try AccessRoute</span><h2>Demo and videos</h2><p>Open the online demo or watch the project in action.</p><div class="links"><a class="button" href="{DEMO}" target="_blank" rel="noopener">Open the live demo {ARROW}</a><a class="text-link" href="{REPORT}" target="_blank" rel="noopener">Read the technical report</a></div><div class="qr-links" aria-label="Project QR codes"><a href="{SITE}index.html" aria-label="Open the project homepage"><img src="assets/qr/project-home.png" width="128" height="128" alt="QR code for the project homepage"><span>Project home {ARROW}</span></a><a href="{REPORT}" target="_blank" rel="noopener" aria-label="Open the technical report PDF"><img src="assets/qr/technical-report.png" width="128" height="128" alt="QR code for the technical report PDF"><span>Technical report {ARROW}</span></a></div></div><div aria-label="Project videos">'''
 for n,url,title,desc in [
  ('01','https://youtu.be/Tlcvxx7CijE','Field demonstration','Watch the on-site demonstration.'),
  ('02','https://www.youtube.com/watch?v=6SW-bbH5f8U','Demo video 1','Watch the demo on YouTube.'),
